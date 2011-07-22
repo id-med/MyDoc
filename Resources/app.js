@@ -1,64 +1,69 @@
+/**
+ * this is the start file it will be called at first
+ */
+// android test
+var isAndroid= Ti.Platform.osname == 'android'?true:false;
+// android is black and iphone is white
+// (resist the urge to write some stupid line after that)
+if (isAndroid) {
+  var BGC='#000'
+}else{
+  var BGC='#fff'
+}
 // this sets the background color of the master UIView (when there are no windows/tab groups on it)
-Titanium.UI.setBackgroundColor('#000');
+Titanium.UI.setBackgroundColor(BGC);
+
+// get size of device
+var DWidth=  Ti.Platform.displayCaps.platformWidth;
+var DHeight= Ti.Platform.displayCaps.platformHeight;
 
 // create tab group
 var tabGroup = Titanium.UI.createTabGroup();
 
-
-//
-// create base UI tab and root window
-//
-var win1 = Titanium.UI.createWindow({  
-    title:'Tab 1',
-    backgroundColor:'#fff'
+// create the 2 windows for each tab
+var ContentWindow= Ti.UI.createWindow({
+  layout:'vertical',
+  backgroundColor:BGC
 });
-var tab1 = Titanium.UI.createTab({  
-    icon:'KS_nav_views.png',
-    title:'Tab 1',
-    window:win1
+var SettingsWindow = Titanium.UI.createWindow({  
+  layout:'vertical',
+  backgroundColor:BGC,
+  url:'/others/settings.js'
 });
 
-var label1 = Titanium.UI.createLabel({
-	color:'#999',
-	text:'I am Window 1',
-	font:{fontSize:20,fontFamily:'Helvetica Neue'},
-	textAlign:'center',
-	width:'auto'
+// create the 2 tabs
+var ContentTab = Titanium.UI.createTab({  
+    icon:'/images/'+'KS_nav_views.png',
+    title:'MyDoc',
+    window:ContentWindow
+});
+var SettingsTab = Titanium.UI.createTab({  
+    icon:'/images/'+'KS_nav_ui.png',
+    // TODO ver.1+ language
+    title:'Einstellungen',
+    window:SettingsWindow
 });
 
-win1.add(label1);
+// include the http requester for the json stream
+Ti.include('/others/http_requester.js');
 
-//
-// create controls tab and root window
-//
-var win2 = Titanium.UI.createWindow({  
-    title:'Tab 2',
-    backgroundColor:'#fff'
-});
-var tab2 = Titanium.UI.createTab({  
-    icon:'KS_nav_ui.png',
-    title:'Tab 2',
-    window:win2
-});
+// TODO get login and password from file
+var login= 'Superadmin';
+var password= 'kasten';
+// set JSONWindow for the http requester file
+var JsonWindow= ContentWindow;
 
-var label2 = Titanium.UI.createLabel({
-	color:'#999',
-	text:'I am Window 2',
-	font:{fontSize:20,fontFamily:'Helvetica Neue'},
-	textAlign:'center',
-	width:'auto'
+/**
+ * try to get the url and do what he must do in the fileDoTo
+ */
+httpRequest({
+	url:'http://mydoc.id-med.de/?login_email='+login+'&login_password='+password+'&create_session=0&return=json&module=mydoc&sektion=my_doctors',
+	fileDoTo:'/others/json_content/myDocs.js'
 });
 
-win2.add(label2);
-
-
-
-//
-//  add tabs
-//
-tabGroup.addTab(tab1);  
-tabGroup.addTab(tab2);  
-
+// add tabs to the tabgroup
+tabGroup.addTab(ContentTab);  
+tabGroup.addTab(SettingsTab);  
 
 // open tab group
 tabGroup.open();
