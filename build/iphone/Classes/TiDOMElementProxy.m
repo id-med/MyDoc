@@ -44,6 +44,7 @@
 	{
 		TiDOMNodeListProxy *proxy = [[[TiDOMNodeListProxy alloc] _initWithPageContext:[self pageContext]] autorelease];
 		[proxy setNodes:nodes];
+		[proxy setDocument:[self document]];
 		return proxy;
 	}
 	if (error!=nil)
@@ -62,6 +63,7 @@
 	{
 		TiDOMNodeListProxy *proxy = [[[TiDOMNodeListProxy alloc] _initWithPageContext:[self pageContext]] autorelease];
 		[proxy setNodes:nodes];
+		[proxy setDocument:[self document]];
 		return proxy;
 	}
 	return nil;

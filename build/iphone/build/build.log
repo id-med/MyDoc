@@ -1,0 +1,79 @@
+================================================================================
+Appcelerator Titanium Diagnostics Build Log
+The contents of this file are useful to send to Appcelerator Support if
+reporting an issue to help us understand your environment, build settings
+and aid in debugging. Please attach this log to any issue that you report.
+================================================================================
+
+Starting build at 07/25/11 16:21
+
+Build details:
+
+   timestamp=07/21/11 09:36
+   version=1.7.2
+   githash=97c3689
+
+
+Script arguments:
+   /Library/Application Support/Titanium/mobilesdk/osx/1.7.2/iphone/builder.py
+   simulator
+   4.3
+   /Users/idmedapp/development/workspace/MyDoc
+   de.idmed.mydoc
+   MyDoc
+   universal
+   iphone
+   
+
+Building from: /Library/Application Support/Titanium/mobilesdk/osx/1.7.2/iphone
+Platform: Darwin Kernel Version 10.7.4: Mon Apr 18 21:24:17 PDT 2011; root:xnu-1504.14.12~3/RELEASE_X86_64
+
+Xcode path is: /Developer
+
+
+githash=97c3689, existing_git_hash=97c3689
+writing contents of /Users/idmedapp/development/workspace/MyDoc/build/iphone/project.xcconfig:
+
+TI_VERSION=1.7.2
+TI_SDK_DIR=/Library/Application Support/Titanium/mobilesdk/osx/$(TI_VERSION)/iphone
+TI_APPID=de.idmed.mydoc
+OTHER_LDFLAGS[sdk=iphoneos*]=$(inherited) -weak_framework iAd
+OTHER_LDFLAGS[sdk=iphonesimulator*]=$(inherited) -weak_framework iAd
+#include "module"
+
+old contents
+
+
+Generated the following stylecode code:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>classes</key>
+		<dict>
+</dict>
+
+		<key>classes_density</key>
+		<dict>
+</dict>
+
+		<key>ids</key>
+		<dict>
+</dict>
+
+		<key>ids_density</key>
+		<dict>
+</dict>
+
+		<key>tags</key>
+		<dict>
+</dict>
+
+		<key>tags_density</key>
+		<dict>
+</dict>
+
+	</dict>
+</plist>
+Finishing build

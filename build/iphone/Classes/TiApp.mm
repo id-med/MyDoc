@@ -222,8 +222,13 @@ void MyUncaughtExceptionHandler(NSException *exception)
 	if (!loaded) {
 		[self attachSplash];
 	}
-	[window addSubview:controller.view];
-
+	if ([window respondsToSelector:@selector(setRootViewController:)]) {
+		[window setRootViewController:controller];
+	}
+	else
+	{
+		[window addSubview:[controller view]];
+	}
     [window makeKeyAndVisible];
 }
 
@@ -280,7 +285,7 @@ void MyUncaughtExceptionHandler(NSException *exception)
 
 - (void)boot
 {
-	NSLog(@"[INFO] %@/%@ (%s.1293a6d)",TI_APPLICATION_NAME,TI_APPLICATION_VERSION,TI_VERSION_STR);
+	NSLog(@"[INFO] %@/%@ (%s.97c3689)",TI_APPLICATION_NAME,TI_APPLICATION_VERSION,TI_VERSION_STR);
 	
 	sessionId = [[TiUtils createUUID] retain];
 	TITANIUM_VERSION = [[NSString stringWithCString:TI_VERSION_STR encoding:NSUTF8StringEncoding] retain];

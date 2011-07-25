@@ -13,10 +13,12 @@
 #import "TiUtils.h"
 
 @implementation TiDOMNamedNodeMapProxy
+@synthesize document;
 
 -(void)dealloc
 {
 	RELEASE_TO_NIL(element);
+	RELEASE_TO_NIL(document);
 	[super dealloc];
 }
 
@@ -32,6 +34,7 @@
 	GDataXMLNode *node = [element attributeForName:name];
 	TiDOMNodeProxy *proxy = [[[TiDOMNodeProxy alloc] _initWithPageContext:[self pageContext]] autorelease];
 	[proxy setNode:node];
+	[proxy setDocument:[self document]];
 	return proxy;
 }
 
@@ -52,6 +55,7 @@
 	GDataXMLNode *node = [[element attributes] objectAtIndex:index];
 	TiDOMNodeProxy *proxy = [[[TiDOMNodeProxy alloc] _initWithPageContext:[self pageContext]] autorelease];
 	[proxy setNode:node];
+	[proxy setDocument:[self document]];
 	return proxy;
 }
 

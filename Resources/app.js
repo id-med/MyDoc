@@ -1,6 +1,10 @@
 /**
- * this is the start file it will be called at first
+ * this is the start file
+ * it is to choose if the user is registered with the MyDoc website
+ * if he isnt there will built a login window to input all the data and register with the website
+ * if he already is (data will be taken from the file) the normal app will be loaded
  */
+
 // android test
 var isAndroid= Ti.Platform.osname == 'android'?true:false;
 // android is black and iphone is white
@@ -16,54 +20,22 @@ Titanium.UI.setBackgroundColor(BGC);
 // get size of device
 var DWidth=  Ti.Platform.displayCaps.platformWidth;
 var DHeight= Ti.Platform.displayCaps.platformHeight;
-
-// create tab group
+var file= Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory,'MyDocSettings.txt');
 var tabGroup = Titanium.UI.createTabGroup();
 
-// create the 2 windows for each tab
-var ContentWindow= Ti.UI.createWindow({
-  layout:'vertical',
-  backgroundColor:BGC
-});
-var SettingsWindow = Titanium.UI.createWindow({  
-  layout:'vertical',
-  backgroundColor:BGC,
-  url:'/others/settings.js'
-});
 
-// create the 2 tabs
-var ContentTab = Titanium.UI.createTab({  
-    icon:'/images/'+'KS_nav_views.png',
-    title:'MyDoc',
-    window:ContentWindow
-});
-var SettingsTab = Titanium.UI.createTab({  
-    icon:'/images/'+'KS_nav_ui.png',
-    // TODO ver.1+ language
-    title:'Einstellungen',
-    window:SettingsWindow
-});
 
-// include the http requester for the json stream
-Ti.include('/others/http_requester.js');
+if (file.size==0) {
+  Ti.include('/appLogin.js');
+}else{
+  var settings= JSON.parse(file.read().text);
+  file.write('');
+  
+  //alert(settings.user.name)
+  Ti.include('/appStart.js');
+}
 
-// TODO get login and password from file
-var login= 'Superadmin';
-var password= 'kasten';
-// set JSONWindow for the http requester file
-var JsonWindow= ContentWindow;
 
-/**
- * try to get the url and do what he must do in the fileDoTo
- */
-httpRequest({
-	url:'http://mydoc.id-med.de/?login_email='+login+'&login_password='+password+'&create_session=0&return=json&module=mydoc&sektion=my_doctors',
-	fileDoTo:'/others/json_content/myDocs.js'
-});
-
-// add tabs to the tabgroup
-tabGroup.addTab(ContentTab);  
-tabGroup.addTab(SettingsTab);  
 
 // open tab group
 tabGroup.open();

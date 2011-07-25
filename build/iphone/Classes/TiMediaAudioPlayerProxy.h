@@ -15,6 +15,7 @@
 @interface TiMediaAudioPlayerProxy : TiProxy<AudioStreamerDelegate> {
 @private
 	NSURL *url;
+    NSUInteger bufferSize;
 	AudioStreamer *player;
 	BOOL progress;
 	NSTimer *timer;
@@ -29,6 +30,7 @@
 @property (nonatomic,readonly) NSNumber *progress;
 @property (nonatomic,readonly) NSNumber *state;
 @property (nonatomic,readwrite,assign) NSNumber* audioSessionMode;
+@property (nonatomic,readwrite,assign) NSNumber* bufferSize;
 
 @property (nonatomic,readonly) NSNumber *STATE_INITIALIZED;
 @property (nonatomic,readonly) NSNumber *STATE_STARTING;

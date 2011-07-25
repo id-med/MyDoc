@@ -62,7 +62,8 @@ SettingsTableView.addEventListener('click',function(e){
         url:e.rowData.url,
         title:e.rowData.title,
         backgroundColor:'#fff',
-        barColor:'#111'
+        barColor:'#111',
+        fullscreen:false
       });
     }
     // open in the current tab

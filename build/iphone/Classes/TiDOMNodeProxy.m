@@ -17,12 +17,14 @@
 #import "TiDOMAttrProxy.h"
 
 @implementation TiDOMNodeProxy
+@synthesize document;
 
 #pragma mark Internal
 
 -(void)dealloc
 {
 	RELEASE_TO_NIL(node);
+	RELEASE_TO_NIL(document);
 	[super dealloc];
 }
 
@@ -35,6 +37,19 @@
 -(NSString *)XMLString
 {
 	return [node XMLString];
+}
+
+-(id)makeNode:(id)child context:(id<TiEvaluator>)context
+{
+	// if already a proxy, just return it.
+	if ([child isKindOfClass:[TiDOMNodeProxy class]])
+	{
+		return child;
+	}
+	
+	id result = [TiDOMNodeProxy makeNode:child context:context];
+	[result setDocument:[self document]];
+	return result;
 }
 
 +(id)makeNode:(id)child context:(id<TiEvaluator>)context
@@ -95,7 +110,7 @@
 {
 	xmlNodePtr p = [node XMLNode]->parent;
 	GDataXMLNode* sibling = [GDataXMLNode nodeBorrowingXMLNode:p];
-	return [TiDOMNodeProxy makeNode:sibling context:[self executionContext]];
+	return [self makeNode:sibling context:[self executionContext]];
 }
 
 -(id)childNodes
@@ -103,9 +118,10 @@
 	NSMutableArray *children = [NSMutableArray array];
 	for (GDataXMLNode* child in [node children])
 	{
-		[children addObject:[TiDOMNodeProxy makeNode:child context:[self pageContext]]];
+		[children addObject:[self makeNode:child context:[self pageContext]]];
 	}
 	TiDOMNodeListProxy *proxy = [[[TiDOMNodeListProxy alloc] _initWithPageContext:[self pageContext]] autorelease];
+	[proxy setDocument:[self document]];
 	[proxy setNodes:children];
 	return proxy;
 }
@@ -115,7 +131,7 @@
 	int count = [node childCount];
 	if (count == 0) return nil;
 	id child = [node childAtIndex:0];
-	return [TiDOMNodeProxy makeNode:child context:[self pageContext]];
+	return [self makeNode:child context:[self pageContext]];
 }
 
 -(id)lastChild
@@ -123,7 +139,7 @@
 	int count = [node childCount];
 	if (count == 0) return nil;
 	id child = [node childAtIndex:count-1];
-	return [TiDOMNodeProxy makeNode:child context:[self pageContext]];
+	return [self makeNode:child context:[self pageContext]];
 }
 
 -(id)previousSibling
@@ -134,7 +150,7 @@
 		return nil;
 	}
 	GDataXMLNode* sibling = [GDataXMLNode nodeBorrowingXMLNode:p];
-	return [TiDOMNodeProxy makeNode:sibling context:[self executionContext]];
+	return [self makeNode:sibling context:[self executionContext]];
 }
 
 -(id)nextSibling
@@ -145,12 +161,13 @@
 		return nil;
 	}
 	GDataXMLNode* sibling = [GDataXMLNode nodeBorrowingXMLNode:p];
-	return [TiDOMNodeProxy makeNode:sibling context:[self executionContext]];
+	return [self makeNode:sibling context:[self executionContext]];
 }
 
 -(id)attributes
 {
 	TiDOMNamedNodeMapProxy *proxy = [[[TiDOMNamedNodeMapProxy alloc] _initWithPageContext:[self pageContext]] autorelease];
+	[proxy setDocument:[self document]];
 	[proxy setElement:(GDataXMLElement*)node];
 	return proxy;
 }

@@ -19,14 +19,7 @@
 
 -(void)dealloc
 {
-	RELEASE_TO_NIL(document);
 	[super dealloc];
-}
-
--(void)setDocument:(GDataXMLDocument*)doc
-{
-	RELEASE_TO_NIL(document);
-	document = [doc retain];
 }
 
 -(BOOL)equals:(id)value
@@ -40,23 +33,24 @@
 
 -(void)parseString:(NSString*)xml
 {
-	RELEASE_TO_NIL(document);
 	NSError *error = nil;
-	document = [[GDataXMLDocument alloc] initWithXMLString:xml options:0 error:&error];
-	[self setElement:[document rootElement]];
+	GDataXMLDocument * ourDocument = [[GDataXMLDocument alloc] initWithXMLString:xml options:0 error:&error];
+	[self setElement:[ourDocument rootElement]];
 	if (error!=nil)
 	{
-		RELEASE_TO_NIL(document);
+		[ourDocument release];
 		[self throwException:[error description] subreason:nil location:CODELOCATION];
 	}
+	[self setDocument:ourDocument];
+	[ourDocument release];
 }
 
 #pragma mark Public APIs
 
 -(id)documentElement:(id)args
 {
-	GDataXMLElement *root = [document rootElement];
-	return [TiDOMNodeProxy makeNode:root context:[self pageContext]];
+	GDataXMLElement *root = [[self document] rootElement];
+	return [self makeNode:root context:[self pageContext]];
 }
 
 -(id)getElementsByTagName:(id)args
@@ -74,6 +68,7 @@
 	if (error==nil && nodes!=nil && [nodes count]>0)
 	{
 		TiDOMNodeListProxy *proxy = [[[TiDOMNodeListProxy alloc] _initWithPageContext:[self pageContext]] autorelease];
+		[proxy setDocument:[self document]];
 		[proxy setNodes:nodes];
 		return proxy;
 	}
@@ -88,10 +83,10 @@
 {
 	ENSURE_SINGLE_ARG(args,NSString);
 	NSError *error = nil;
-	NSArray *nodes = [document nodesForXPath:[NSString stringWithFormat:@"//*[@id='%@']",args] error:&error];
+	NSArray *nodes = [[self document] nodesForXPath:[NSString stringWithFormat:@"//*[@id='%@']",args] error:&error];
 	if (error==nil && nodes!=nil && [nodes count]>0)
 	{
-		return [TiDOMNodeProxy makeNode: [nodes objectAtIndex: 0] context:[self pageContext]];
+		return [self makeNode: [nodes objectAtIndex: 0] context:[self pageContext]];
 	}
 	return nil;
 }
@@ -100,10 +95,11 @@
 {
 	ENSURE_SINGLE_ARG(args,NSString);
 	NSError *error = nil;
-	NSArray *nodes = [document nodesForXPath:args error:&error];
+	NSArray *nodes = [[self document] nodesForXPath:args error:&error];
 	if (error==nil && nodes!=nil && [nodes count]>0)
 	{
 		TiDOMNodeListProxy *proxy = [[[TiDOMNodeListProxy alloc] _initWithPageContext:[self pageContext]] autorelease];
+		[proxy setDocument:[self document]];
 		[proxy setNodes:nodes];
 		return proxy;
 	}

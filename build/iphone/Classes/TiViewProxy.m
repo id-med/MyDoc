@@ -1398,6 +1398,21 @@ if(OSAtomicTestAndSetBarrier(flagBit, &dirtyflags))	\
 
 #pragma mark Layout actions
 
+// Need this so we can overload the sandbox bounds on split view detail/master
+-(void)determineSandboxBounds
+{
+    UIView * ourSuperview = [[self view] superview];
+    if(ourSuperview == nil)
+    {
+        //TODO: Should we even be relaying out? I guess so.
+        sandboxBounds = CGRectZero;
+    }
+    else
+    {
+        sandboxBounds = [ourSuperview bounds];
+    }
+}
+
 -(void)refreshView:(TiUIView *)transferView
 {
 	WARN_IF_BACKGROUND_THREAD_OBJ;
@@ -1426,16 +1441,7 @@ if(OSAtomicTestAndSetBarrier(flagBit, &dirtyflags))	\
 		CGRect oldFrame = [[self view] frame];
 		if(![self suppressesRelayout])
 		{
-			UIView * ourSuperview = [[self view] superview];
-			if(ourSuperview == nil)
-			{
-				//TODO: Should we even be relaying out? I guess so.
-				sandboxBounds = CGRectZero;
-			}
-			else
-			{
-				sandboxBounds = [ourSuperview bounds];
-			}
+            [self determineSandboxBounds];
 			[self relayout];
 		}
 		[self layoutChildren:NO];

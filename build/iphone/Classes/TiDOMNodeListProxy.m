@@ -13,10 +13,12 @@
 #import "TiUtils.h"
 
 @implementation TiDOMNodeListProxy
+@synthesize document;
 
 -(void)dealloc
 {
 	RELEASE_TO_NIL(nodes);
+	RELEASE_TO_NIL(document);
 	[super dealloc];
 }
 
@@ -32,7 +34,9 @@
 	int index = [TiUtils intValue:args];
 	if (index < [nodes count])
 	{
-		return [TiDOMNodeProxy makeNode:[nodes objectAtIndex:index] context:[self pageContext]];
+		id result = [TiDOMNodeProxy makeNode:[nodes objectAtIndex:index] context:[self pageContext]];
+		[result setDocument:[self document]];
+		return result;
 	}
 	return nil;
 }
